@@ -218,6 +218,9 @@ pim_enrich:
                     family: Choose a family
                     save: Save
                     cancel: Cancel
+        attribute:
+            scopable: Scopable
+            global: Global
         association_type:
             info:
                 deletion_successful: Association type successfully deleted.
@@ -502,6 +505,17 @@ pim_enrich:
                     title: History
                 products:
                     title: Products
+        attribute_group:
+            tab:
+                properties.title: Properties
+                attribute:
+                    title: Attributes
+                    table:
+                        name: Name
+                        type: Type
+                        scope: Scope
+                        localizable: Localizable
+                history.title: History
         common:
             tab:
                 attributes:

@@ -110,7 +110,12 @@ extensions:
         targetZone: container
         position: 120
         config:
-            label: pim_enrich.form.attribute_group.tab.attribute.title
+            title: pim_enrich.form.attribute_group.tab.attribute.title
+
+    pim-attribute-group-edit-form-attribute-add-attribute:
+        module: pim/product/add-select/attribute
+        parent: pim-attribute-group-edit-form-attribute
+        targetZone: actions
 
     pim-attribute-group-edit-form-history:
         module: pim/common/tab/history

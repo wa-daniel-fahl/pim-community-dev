@@ -45,6 +45,15 @@ class AttributeGroupController
     /** @var SaverInterface */
     protected $saver;
 
+    /** @var EntityRepository */
+    protected $attributeRepository;
+
+    /** @var UpdaterInterface */
+    protected $attributeUpdater;
+
+    /** @var SaverInterface */
+    protected $attributeSaver;
+
     /**
      * @param EntityRepository              $attributeGroupRepo
      * @param SearchableRepositoryInterface $attributeGroupSearchableRepository
@@ -53,6 +62,9 @@ class AttributeGroupController
      * @param ObjectUpdaterInterface        $updater
      * @param ValidatorInterface            $validator
      * @param SaverInterface                $saver
+     * @param EntityRepository              $attributeRepository
+     * @param ObjectUpdaterInterface        $attributeUpdater
+     * @param SaverInterface                $attributeSaver
      */
     public function __construct(
         EntityRepository $attributeGroupRepo,
@@ -61,15 +73,21 @@ class AttributeGroupController
         CollectionFilterInterface $collectionFilter,
         ObjectUpdaterInterface $updater,
         ValidatorInterface $validator,
-        SaverInterface $saver
+        SaverInterface $saver,
+        EntityRepository $attributeRepository,
+        ObjectUpdaterInterface $attributeUpdater,
+        SaverInterface $attributeSaver
     ) {
-        $this->attributeGroupRepo = $attributeGroupRepo;
+        $this->attributeGroupRepo                 = $attributeGroupRepo;
         $this->attributeGroupSearchableRepository = $attributeGroupSearchableRepository;
-        $this->normalizer = $normalizer;
-        $this->collectionFilter = $collectionFilter;
-        $this->updater = $updater;
-        $this->validator = $validator;
-        $this->saver = $saver;
+        $this->normalizer                         = $normalizer;
+        $this->collectionFilter                   = $collectionFilter;
+        $this->updater                            = $updater;
+        $this->validator                          = $validator;
+        $this->saver                              = $saver;
+        $this->attributeRepository                = $attributeRepository;
+        $this->attributeUpdater                   = $attributeUpdater;
+        $this->attributeSaver                     = $attributeSaver;
     }
 
     /**
@@ -168,6 +186,15 @@ class AttributeGroupController
         }
 
         $this->saver->save($attributeGroup);
+
+        // It's now time to update sort order on attributes
+        $sortOrder = $data['attributes_sort_order'];
+        $attributes = $this->attributeRepository->findBy(['code' => array_keys($sortOrder)]);
+        foreach ($attributes as $attribute) {
+            $data = ['sort_order' => $sortOrder[$attribute->getCode()]];
+            $this->attributeUpdater->update($attribute, $data);
+            $this->attributeSaver->save($attribute);
+        }
 
         return new JsonResponse(
             $this->normalizer->normalize(

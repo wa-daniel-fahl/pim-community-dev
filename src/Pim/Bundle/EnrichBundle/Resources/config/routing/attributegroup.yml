@@ -7,7 +7,7 @@ pim_enrich_attributegroup_create:
     defaults: { _controller: pim_enrich.controller.attribute_group:createAction }
 
 pim_enrich_attributegroup_edit:
-    path: /{identifier}/edit
+    path: /{identifier}
     requirements:
         identifier: '[a-zA-Z0-9_]+'
 
